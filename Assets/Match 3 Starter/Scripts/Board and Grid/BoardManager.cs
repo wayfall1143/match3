@@ -27,14 +27,14 @@ public class BoardManager : MonoBehaviour {
         float startX = transform.position.x;
 		float startY = transform.position.y;
 
-		Sprite[] previousLeft = new Sprite[ySize]; // Add this line
-		Sprite previousBelow = null; // Add this line
+		Sprite[] previousLeft = new Sprite[ySize]; 	
+		Sprite previousBelow = null; 	
 
 		for (int x = 0; x < xSize; x++) {
 			for (int y = 0; y < ySize; y++) {
 				GameObject newTile = Instantiate(tile, new Vector3(startX + (xOffset * x), startY + (yOffset * y), 0), tile.transform.rotation);
 				tiles[x, y] = newTile;
-				newTile.transform.parent = transform; // Add this line
+				newTile.transform.parent = transform; 
 
 				List<Sprite> possibleCharacters = new List<Sprite>();
 				possibleCharacters.AddRange(characters);
@@ -65,7 +65,7 @@ public class BoardManager : MonoBehaviour {
 				tiles[x, y].GetComponent<Tile>().ClearAllMatches();
 			}
 		}
-		CheckEndGame(); // Check for end of game
+		CheckEndGame(); 
 	}
 
 	private IEnumerator ShiftTilesDown(int x, int yStart, float shiftDelay = .03f) {
@@ -82,7 +82,7 @@ public class BoardManager : MonoBehaviour {
 		}
 
 		for (int i = 0; i < nullCount; i++) {
-			GUIManager.instance.Score += 50; // Add this line here
+			GUIManager.instance.Score += 50; 
 			yield return new WaitForSeconds(shiftDelay);
 			for (int k = 0; k < renders.Count - 1; k++) {
 				renders[k].sprite = renders[k + 1].sprite;
@@ -115,25 +115,25 @@ private void CheckEndGame() {
         for (int y = 0; y < ySize; y++) {
             Sprite sprite = tiles[x, y].GetComponent<SpriteRenderer>().sprite;
             if (sprite != null) {
-                // Check horizontal match
+                
                 if (x < xSize - 2 && sprite == tiles[x + 1, y].GetComponent<SpriteRenderer>().sprite && sprite == tiles[x + 2, y].GetComponent<SpriteRenderer>().sprite) {
-                    return; // There is a valid move, exit method
+                    return; 
                 }
                 // Check vertical match
                 if (y < ySize - 2 && sprite == tiles[x, y + 1].GetComponent<SpriteRenderer>().sprite && sprite == tiles[x, y + 2].GetComponent<SpriteRenderer>().sprite) {
-                    return; // There is a valid move, exit method
+                    return; 
                 }
             }
         }
     }
-    // No valid moves, end game
+    
     Debug.Log("No more valid moves, game over!");
-    // Add your end game logic here
+    
     GameOver();
 }
 
 private void GameOver() {
-    // TODO: Add your game over logic here, such as invoking a game over event or displaying a game over screen
+    
 }
 
 }

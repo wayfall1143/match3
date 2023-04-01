@@ -28,32 +28,66 @@ public class Tile : MonoBehaviour {
 		previousSelected = null;
 	}
 
-	void OnMouseDown() {
+	void OnMouseDown()
+{
     // Not Selectable conditions
-    if (render.sprite == null || BoardManager.instance.IsShifting) {
+    if (render.sprite == null || BoardManager.instance.IsShifting)
+    {
         return;
     }
-
-    if (isSelected) { // Is it already selected?
+ 
+    // Is it already selected?
+    if (isSelected)
+    {
         Deselect();
-    } else {
-        if (previousSelected == null) { // Is it the first tile selected?
+        return;
+    }
+ 
+ 
+    // Is it the first tile selected?
+    if (previousSelected == null)
+    {
+        Select();
+        return;
+    }
+ 
+ 
+    // Is it an adjacent tile?
+    if (GetAllAdjacentTiles().Contains(previousSelected.gameObject))
+    {
+        Sprite prev = previousSelected.render.sprite;
+        Sprite current = render.sprite;
+ 
+        previousSelected.render.sprite = current;
+        render.sprite = prev;
+ 
+        if (CombinationExists() || previousSelected.CombinationExists())
+        {
+            //print("exist");
+            previousSelected.render.sprite = prev;
+            render.sprite = current;
+ 
+            SwapSprite(previousSelected.render);
+            previousSelected.ClearAllMatches();
+            previousSelected.Deselect();
+            ClearAllMatches();
+        }
+        else
+        {
+            //print("not exist");
+            previousSelected.render.sprite = prev;
+            render.sprite = current;
+ 
+            previousSelected.GetComponent<Tile>().Deselect();
             Select();
-        } else {
-            if (GetAllAdjacentTiles().Contains(previousSelected.gameObject)) { // Is it an adjacent tile?
-                SwapSprite(previousSelected.render);
-                previousSelected.ClearAllMatches();
-                if (!matchFound) { // if no matches found, cancel the move
-                    SwapSprite(previousSelected.render);
-                    Deselect();
-                }
-                ClearAllMatches();
-            } else {
-                previousSelected.GetComponent<Tile>().Deselect();
-                Select();
-            }
         }
     }
+    else
+    {
+        previousSelected.GetComponent<Tile>().Deselect();
+        Select();
+    }
+ 
 }
 
 	public void SwapSprite(SpriteRenderer render2) {
@@ -120,5 +154,29 @@ public class Tile : MonoBehaviour {
 			SFXManager.instance.PlaySFX(Clip.Clear);
 		}
 	}
+
+	public bool CombinationExists()
+{
+    var horizontal = new[] { Vector2.left, Vector2.right };
+    var vertical = new[] { Vector2.up, Vector2.down };
+ 
+    List<GameObject> matchingTiles = new List<GameObject>();
+ 
+    for (int i = 0; i < horizontal.Length; i++)
+        matchingTiles.AddRange(FindMatch(horizontal[i]));
+ 
+    if (matchingTiles.Count >= 2)
+        return true;
+ 
+    matchingTiles.Clear();
+    for (int i = 0; i < vertical.Length; i++)
+        matchingTiles.AddRange(FindMatch(vertical[i]));
+ 
+    if (matchingTiles.Count >= 2)
+        return true;
+ 
+    return false;
+ 
+}
 
 }
