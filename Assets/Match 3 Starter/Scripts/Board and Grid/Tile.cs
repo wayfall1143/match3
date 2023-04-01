@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -30,13 +30,13 @@ public class Tile : MonoBehaviour {
 
 	void OnMouseDown()
 {
-    // Not Selectable conditions
+    
     if (render.sprite == null || BoardManager.instance.IsShifting)
     {
         return;
     }
  
-    // Is it already selected?
+    
     if (isSelected)
     {
         Deselect();
@@ -44,7 +44,7 @@ public class Tile : MonoBehaviour {
     }
  
  
-    // Is it the first tile selected?
+    
     if (previousSelected == null)
     {
         Select();
@@ -52,7 +52,7 @@ public class Tile : MonoBehaviour {
     }
  
  
-    // Is it an adjacent tile?
+    
     if (GetAllAdjacentTiles().Contains(previousSelected.gameObject))
     {
         Sprite prev = previousSelected.render.sprite;
@@ -63,7 +63,7 @@ public class Tile : MonoBehaviour {
  
         if (CombinationExists() || previousSelected.CombinationExists())
         {
-            //print("exist");
+            
             previousSelected.render.sprite = prev;
             render.sprite = current;
  
@@ -74,7 +74,7 @@ public class Tile : MonoBehaviour {
         }
         else
         {
-            //print("not exist");
+            
             previousSelected.render.sprite = prev;
             render.sprite = current;
  
@@ -99,7 +99,7 @@ public class Tile : MonoBehaviour {
 		render2.sprite = render.sprite;
 		render.sprite = tempSprite;
 		SFXManager.instance.PlaySFX(Clip.Swap);
-		GUIManager.instance.MoveCounter--; // Add this line here
+		GUIManager.instance.MoveCounter--; 
 	}
 
 	private GameObject GetAdjacent(Vector2 castDir) {
@@ -149,8 +149,8 @@ public class Tile : MonoBehaviour {
 		if (matchFound) {
 			render.sprite = null;
 			matchFound = false;
-			StopCoroutine(BoardManager.instance.FindNullTiles()); //Add this line
-			StartCoroutine(BoardManager.instance.FindNullTiles()); //Add this line
+			StopCoroutine(BoardManager.instance.FindNullTiles()); 
+			StartCoroutine(BoardManager.instance.FindNullTiles()); 
 			SFXManager.instance.PlaySFX(Clip.Clear);
 		}
 	}
