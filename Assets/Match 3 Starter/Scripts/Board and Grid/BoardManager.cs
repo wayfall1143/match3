@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,6 +17,7 @@ public class BoardManager : MonoBehaviour {
 
 		Vector2 offset = tile.GetComponent<SpriteRenderer>().bounds.size;
         CreateBoard(offset.x, offset.y);
+		ShuffleBoard();
     }
 
 
@@ -115,25 +116,91 @@ private void CheckEndGame() {
         for (int y = 0; y < ySize; y++) {
             Sprite sprite = tiles[x, y].GetComponent<SpriteRenderer>().sprite;
             if (sprite != null) {
-                
                 if (x < xSize - 2 && sprite == tiles[x + 1, y].GetComponent<SpriteRenderer>().sprite && sprite == tiles[x + 2, y].GetComponent<SpriteRenderer>().sprite) {
-                    return; 
+                    return;
                 }
-                // Check vertical match
                 if (y < ySize - 2 && sprite == tiles[x, y + 1].GetComponent<SpriteRenderer>().sprite && sprite == tiles[x, y + 2].GetComponent<SpriteRenderer>().sprite) {
-                    return; 
+                    return;
                 }
             }
         }
     }
-    
     Debug.Log("No more valid moves, game over!");
-    
     GameOver();
+    ShuffleBoard(); // добавляем вызов метода ShuffleBoard()
 }
 
 private void GameOver() {
     
 }
 
+private void ShuffleBoard() {
+		List<GameObject> allTiles = new List<GameObject>();
+		foreach (Transform row in transform) {
+			foreach (Transform tile in row.transform) {
+				allTiles.Add(tile.gameObject);
+			}
+		}
+
+		foreach (GameObject tile in allTiles)
+			;} 
+			List<GameObject> GetNeighbors(int x, int y) {
+				List<GameObject> neighbors = new List<GameObject>();
+
+				// Check top neighbor
+				if (y < ySize - 1) {
+					neighbors.Add(tiles[x, y + 1]);
+				}
+
+				// Check bottom neighbor
+				if (y > 0) {
+					neighbors.Add(tiles[x, y - 1]);
+				}
+
+				// Check left neighbor
+				if (x > 0) {
+					neighbors.Add(tiles[x - 1, y]);
+				}
+
+				// Check right neighbor
+				if (x < xSize - 1) {
+					neighbors.Add(tiles[x + 1, y]);
+				}
+
+				return neighbors;
+			}
+
+private bool HasPossibleMatches() {
+    List<GameObject> matches = new List<GameObject>();
+    for (int x = 0; x < xSize; x++) {
+        for (int y = 0; y < ySize; y++) {
+            Sprite sprite = tiles[x, y].GetComponent<SpriteRenderer>().sprite;
+            if (sprite != null) {
+                // Check right neighbor
+                if (x < xSize - 2 && sprite == tiles[x + 1, y].GetComponent<SpriteRenderer>().sprite && sprite == tiles[x + 2, y].GetComponent<SpriteRenderer>().sprite) {
+                    matches.Add(tiles[x, y]);
+                    matches.Add(tiles[x + 1, y]);
+                    matches.Add(tiles[x + 2, y]);
+                }
+                // Check top neighbor
+                if (y < ySize - 2 && sprite == tiles[x, y + 1].GetComponent<SpriteRenderer>().sprite && sprite == tiles[x, y + 2].GetComponent<SpriteRenderer>().sprite) {
+                    matches.Add(tiles[x, y]);
+                    matches.Add(tiles[x, y + 1]);
+                    matches.Add(tiles[x, y + 2]);
+                }
+            }
+        }
+    }
+    return matches.Count > 0;
 }
+
+void Update() {
+    CheckEndGame();
+	if (!IsShifting && !HasPossibleMatches()) {
+    ShuffleBoard();
+}
+}
+
+}
+
+
